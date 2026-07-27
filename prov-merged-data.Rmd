@@ -1,0 +1,1829 @@
+---
+output:
+  html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+<style type="text/css">
+div.main-container {
+  max-width: 2000px;
+  margin-left: 0;
+  margin-right: auto;
+}
+</style>
+<style>
+.tocify {
+color: black;
+}
+<!-- } -->
+<!-- .tocify .tocify-header { -->
+<!--     position: fixed; -->
+<!--     <!-- top: 50px; --> -->
+<!--     left: 50px; -->
+<!--     width: 350px; -->
+<!--     <!-- border: solid 3px black; --> -->
+<!--     <!-- height: 200px; --> -->
+<!--  border: none; -->
+<!-- } -->
+.tocify .tocify-header .active {
+color: white;
+background: #d80b8c;
+font-weight: bold;
+}
+<!-- .tocify .tocify-item { -->
+<!-- background: white; -->
+<!-- color: black; -->
+<!--  border: none; -->
+<!-- } -->
+</style>
+<style>
+  .nav-pills>li>a:hover, .nav-pills>li>a:focus, .nav-pills>li.active>a,     .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus{
+     background-color: #212070;
+     }
+</style>
+<style>
+.container { width: 1800px; }
+h2 {
+  background-color: #dddedd;
+  color: black;
+  text-indent: 20px;
+  <!-- font-weight: bold; -->
+}
+h3 {
+  background-color: #f2f2f2;
+  color: black;
+  text-indent: 20px;
+  <!-- font-weight: bold; -->
+}
+h4 {
+  <!-- background-color: #dddedd; -->
+  <!-- color: black; -->
+  text-indent: 50px;
+  <!-- font-weight: bold; -->
+}
+</style>
+<style>
+.blackbox {
+  padding: 1em;
+  background: white;
+  color: black;
+  border: 2px solid #7f7f7f;
+  width: 100%;
+  position: center;
+  align: center;
+  margin: 0px auto;
+}
+.center {
+  text-align: left;
+  margin: 0px auto;
+}
+</style>
+<!-- ```{css toc-content, echo = FALSE} -->
+<!-- #TOC { -->
+<!--   right: 270px; -->
+<!--   margin: 20px 0px 25px 0px; -->
+<!-- } -->
+<!-- .main-container { -->
+<!--     margin-left: 200px; -->
+<!-- } -->
+<!-- ``` -->
+```{r Load Packages, echo = FALSE, warning = FALSE, message = FALSE}
+
+# # Load packages -----------------------------------------------------------------------------------
+suppressMessages({
+  memory.limit(size = 8000000)
+  library(readxl)
+  library(writexl)
+  library(plyr)
+  library(dplyr)
+  library(data.table)
+  library(zoo)
+  library(shiny)
+  library(shinydashboard)
+  library(shinydashboardPlus)
+  library(shinyWidgets)
+  library(htmlwidgets)
+  library(lubridate)
+  library(tcltk)
+  library(tidyverse)
+  library(plotly)
+  library(knitr)
+  library(kableExtra)
+  library(leaflet)
+  library(grid)
+  library(gridExtra)
+  library(eeptools)
+  library(ggQC)
+  library(zipcodeR)
+  library(utils)
+  library(scales)
+  library(chron)
+  library(bupaR)
+  library(shiny)
+  library(DT)
+  library(DiagrammeR)
+  library(shinyalert)
+  library(edeaR)
+  library(processmapR)
+  library(processmonitR)
+  library(processanimateR)
+  library(tidyr)
+  library(lubridate)
+  library(RColorBrewer)
+  library(DiagrammeR)
+  library(ggplot2)
+  library(leaflet)
+  library(readr)
+  library(highcharter)
+  library(ggforce) # for 'geom_arc_bar'
+  library(packcircles) # for packed circle graph
+  library(viridis)
+  library(ggiraph)
+  library(treemapify)
+  library(treemap)
+  library(broom)
+  library(extrafont)
+  library(tis) # for US holidays
+  library(vroom)
+  library(sjmisc)
+  library(tools)
+  library(here)
+  library(shinyBS)
+  library(shinyscreenshot)
+  library(fasttime)
+  library(shinycssloaders)
+  library(feather)
+  # library(zipcodeR)
+  library(formattable)
+  library(shinyjs)
+  library(janitor)
+  library(patchwork)
+  library(flexdashboard)
+  # library(tidyverse)
+  # library(viridis)
+  # library(hrbrthemes)
+  # library(plotly)
+  # install.packages("bsts")
+  library(bsts)
+  library(reactable)
+  # install.packages("reactablefmtr")
+  library(reactablefmtr)
+  library(svDialogs)
+  # library(openxlsx)
+  library(flextable)
+  library(officedown)
+  library(officer)
+  library(magrittr)
+  library(webshot) 
+  library(png)
+  library(ggh4x)
+  library(RODBC)
+  library(DBI)
+  library(odbc)
+  library(dbplyr)
+  library(pool)
+  library(emojifont)
+  library(lubridate)
+})
+
+# devtools::install_github("hafen/lazyrmd")
+# require(lazyrmd)
+# 
+# options(repos = c(tessera = "http://packages.tessera.io",
+#   getOption("repos")))
+# install.packages("lazyrmd")
+# require(lazyrmd)
+
+```
+
+
+```{r Graph asthetics, echo = FALSE, warning = FALSE, message = FALSE}
+### Color Functions for Graphs ============================================================
+
+# Mount Sinai corporate colors "USE THIS TO ADD COLORS"
+MountSinai_colors <- c(
+  `dark purple`  = "#212070",
+  `dark pink`    = "#d80b8c",
+  `dark blue`    = "#00aeef",
+  `dark grey`    = "#7f7f7f",
+  `yellow`       = "#ffc000",
+  `purple`       = "#7030a0",
+  `med purple`   = "#5753d0",
+  `med pink`     = "#f75dbe",
+  `med blue`     = "#5cd3ff",
+  `med grey`     = "#a5a7a5",
+  `light purple` = "#c7c6ef",
+  `light pink`   = "#fcc9e9",
+  `light blue`   = "#c9f0ff",
+  `light grey`   = "#dddedd"
+  )
+
+# Function to extract Mount Sinai colors as hex codes
+# Use Character names of MountSinai_colors
+
+MountSinai_cols <- function(...) {
+  cols <- c(...)
+  
+  if (is.null(cols))
+    return (MountSinai_colors)
+  
+  MountSinai_colors[cols]
+}
+
+# Color Function that can be used to call all colors is "MountSinai_cols()"
+# Use in ggplot 
+
+  #MountSinai_cols()       # will provide all colors and their hex codes in a table 
+  #MountSinai_cols("pink") # will provide color name and the hex code for the pink color
+
+# Create palettes 
+MountSinai_palettes <- list(
+  `all`   = MountSinai_cols("dark purple","dark pink","dark blue","dark grey",
+                            "med purple","med pink","med blue","med grey", 
+                            "light purple","light pink","light blue","light grey"),
+  
+  `main`  = MountSinai_cols("dark purple","dark pink","dark blue","dark grey"),
+  
+  `purple`  = MountSinai_cols("dark purple","med purple","light purple"),
+  
+  `pink`  = MountSinai_cols("dark pink","med pink","light pink"),
+  
+  `blue`  = MountSinai_cols("dark blue", "med blue", "light blue"),
+  
+  `grey`  = MountSinai_cols("dark grey", "med grey", "light grey"),
+  
+  `purpleGrey` = MountSinai_cols("dark purple", "dark grey"),
+  
+  `pinkBlue` = MountSinai_cols("dark pink", "dark blue")
+  
+)
+
+# MountSinai_palettes
+# Return function to interpolate a Mount Sinai color palette
+# default value is the main palette, reverse = True will change the order
+
+MountSinai_pal <- function(palette = "all", reverse = FALSE, ...) {
+  pal <- MountSinai_palettes[[palette]]
+  
+  if (reverse) pal <- rev(pal)
+  
+  colorRampPalette(pal, ...)
+}
+
+
+
+# Scale Function for ggplot can be used instead of scale_color_manual
+scale_color_MountSinai <- function(palette = "all", discrete = TRUE, reverse = FALSE, ...) {
+  pal <- MountSinai_pal(palette = palette, reverse = reverse)
+  
+  if (discrete) {
+    discrete_scale("colour", paste0("MountSinai_", palette), palette = pal, ...)
+  } else {
+    scale_color_gradientn(colours = pal(256), ...)
+  }
+}
+
+# Scale Fill for ggplot insetead of scale_fill_manual 
+scale_fill_MountSinai <- function(palette = "all", discrete = TRUE, reverse = FALSE, ...) {
+  pal <- MountSinai_pal(palette = palette, reverse = reverse)
+
+  if (discrete) {
+    discrete_scale("fill", paste0("MountSinai_", palette), palette = pal, ...)
+  } else {
+    scale_fill_gradientn(colours = pal(256), ...)
+  }
+}
+
+# Use in ggplot 
+  # scale_color_MountSinai("main")
+
+```
+
+
+```{r Global Functions, echo = FALSE, warning = FALSE, message = FALSE}
+
+'%!in%' <- function(x,y)!('%in%'(x,y)) # Does not include
+not_all_na <- function(x) all(!is.na(x)) # Exclude columns with All NAs
+
+```
+
+
+```{r Data Connections, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Connection to Oracle DB ------------------------------------------------------
+conn1 <- dbPool(drv = odbc(), dsn = "OAO Cloud DB SoYoun", timeout = 30)
+conn3 <- dbPool(drv = odbc(), dsn = "OAO Cloud DB Production", timeout = 30)
+conn2 <- dbConnect(odbc(), 
+                  "Clarity_prod", 
+                  uid = "kweons01" , 
+                  pwd = "kweons01123$")
+conn4 <- dbPool(drv = odbc(), dsn = "OAO Cloud DB Staging", timeout = 30)
+
+conn5 <- dbConnect(odbc(),
+                    Driver = "SQLServer",
+                    # Server = "10.2.42.69", # old server
+                    Server = "datahub-synapse.sql.azuresynapse.net",
+                    database = "datahub_epic_dw",
+                    UID = "MSS_USER",
+                    PWD = "Apple_Bees456$",
+                    Port = 1433)
+
+
+
+# Clarity Connection  ------------------------------------------------
+slot_raw_tbl <- tbl(conn2, "Y_DM_BOOKED_FILLED_RATE")
+access_raw_tbl <- tbl(conn2, "MV_DM_PATIENT_ACCESS")
+f_sched_appt_tbl <- tbl(conn2, "F_SCHED_APPT")
+availability_raw_tbl <- tbl(conn2, "V_AVAILABILITY")
+block_raw_tbl <- tbl(conn2, "AVAIL_BLOCK")
+block_name_tbl <- tbl(conn2, "ZC_APPT_BLOCK")
+orders_raw_tbl <- tbl(conn2, "ORDER_PROC")
+visit_type_tbl <- tbl(conn2, "CL_PRC_VT_GROUPS")
+visit_type_mapping_tbl <- tbl(conn2, "ZC_VISIT_TYPE_GRP")
+
+dep_mapping_tbl <- tbl(conn2, "CLARITY_DEP")
+dep_mapping <- dep_mapping_tbl %>%
+  # dplyr::select(DEPARTMENT_ID, SPECIALTY) %>%
+  collect()
+
+clarity_ser_tbl <- tbl(conn2, "CLARITY_SER")
+clarity_ser_2_tbl <- tbl(conn2, "CLARITY_SER_2")
+
+finclass_tbl <- tbl(conn2, "V_PB_EPP_CUSTOM_PRD_TYPE")
+
+
+# Local Connection ---------------------------------------------------
+radiology_dep_mapping_tbl <- tbl(conn1, "RADIOLOGY_DEP_MAPPING")
+
+clarity_ser_tbl_loc <- tbl(conn1, "CLARITY_SER")
+clarity_ser_2_tbl_loc <- tbl(conn1, "CLARITY_SER_2")
+
+dep_mapping_tbl_loc <- tbl(conn1, "CLARITY_DEP")
+
+slot_data_raw_tbl <- tbl(conn1, "ALL_SLOTS")
+slot_data_tbl <- tbl(conn1, "SLOT_DATA")
+slot_data_prc_raw_tbl <- tbl(conn1, "ALL_SLOTS_PRC")
+slot_data_prc_tbl <- tbl(conn1, "SLOT_DATA_PRC")
+
+block_raw_tbl_loc <- tbl(conn1, "AVAIL_BLOCK")
+block_name_tbl_loc <- tbl(conn1, "ZC_APPT_BLOCK")
+
+
+
+
+#slot_view_tbl <- tbl(conn3, in_schema("OAO_PRODUCTION", "AMBULATORY_SLOT_TABLE"))
+
+
+# Azure Connection ---------------------------------------------------
+# access_raw_tbl <- tbl(conn5, in_schema("CLARITY", "MV_DM_PATIENT_ACCESS"))
+# f_sched_appt_tbl <- tbl(conn5, dbplyr::ident_q('"CLARITY"."F_SCHED_APPT"'))
+clarity_dep_conn <- tbl(conn5, dbplyr::ident_q('"Clarity"."CLARITY_DEP"'))
+
+referrals_conn <- tbl(conn5, dbplyr::ident_q('"MS_SOLUTIONS_DEV"."y_s2_referrals_tmp"'))
+caboodle_referrals_conn <- tbl(conn5, dbplyr::ident_q('"CABOODLE"."ReferralsDataView"'))
+caboodle_referralFact_conn <- tbl(conn5, dbplyr::ident_q('"CABOODLE"."ReferralFact"'))
+patient_conn <- tbl(conn5, dbplyr::ident_q('"CABOODLE"."PatientDim"'))
+department_conn <- tbl(conn5, dbplyr::ident_q('"CABOODLE"."DepartmentDim"'))
+
+clarity_referrals_tbl <- tbl(conn5, dbplyr::ident_q('"Clarity"."REFERRAL"'))
+clarity_referrals_wq_tbl <- tbl(conn5, dbplyr::ident_q('"Clarity"."REFERRAL_WQ"'))
+
+visitFact_conn <- tbl(conn5, dbplyr::ident_q('"Caboodle"."VisitFact"'))
+
+
+# conn6 <- dbPool(drv = odbc(), dsn = "Caboodle", timeout = 30)
+
+
+
+
+```
+
+
+
+```{r Report Variables, echo = FALSE, warning = FALSE, message = FALSE}
+
+report_run_date <- Sys.Date()
+date_start <- format(Sys.Date(), "%Y-%m-%d")
+# date_start <- paste0(format(Sys.Date(), "%Y-%m"),"-01")
+
+current_year <- format(report_run_date, "%Y")
+prior_year <- as.character(as.numeric(current_year) -1)
+baseline_year <- as.character(as.numeric(current_year) -2)
+
+current_month <- format(report_run_date, "%m")
+
+current_year_month <- paste0(current_year,"-",current_month)
+```
+
+
+
+```{r Template Utilization Updated, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Grouper 17 Mapping
+# 2 = NETWORK
+# 3 = OTHER 
+# 4 = MSH-MSDFP
+# 6 = MSUS
+# 7 = MSDMG
+# 8 = MSBI
+# 9 = MSW
+# 10 = MSHS
+# 11 = MSM
+# 12 = MSH- AMBULATORY CARE
+# 13 = NYEE 
+# 14 = MS NOW
+# 15 = MSQ
+# 19 = MSSN
+# 38 = MSB
+
+
+grp_mapping <- data.frame("SITE" = c("NETWORK", "OTHER", "MSH-MSDFP", "MSUS", 
+                                        "MSDMG", "MSBI", "MSW", "MSHP", "MSM", "MSH- AMBULATORY CARE",
+                                        "NYEE", "MS NOW", "MSQ", "MSSN", "MSB"),
+                             "RPT_GRP_SEVNTEEN_C" = c(2, 3,4, 6, 
+                                                      7, 8, 9, 10, 11, 12,
+                                                      13, 14, 15, 19, 38))
+
+
+
+slot_merged <- slot_data_prc_tbl %>%
+  left_join(clarity_ser_tbl_loc %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl_loc %>% 
+              dplyr::select(PROV_ID, NPI, GENERIC_YN)) %>%
+  filter(GENERIC_YN == "N" | is.na(GENERIC_YN)) %>%
+  left_join(dep_mapping_tbl_loc %>%
+              mutate(SITE = case_when(RPT_GRP_SEVNTEEN_C == 2 ~ "NETWORK", 
+                                      RPT_GRP_SEVNTEEN_C == 3 ~ "OTHER", 
+                                      RPT_GRP_SEVNTEEN_C == 4 ~ "MSH-MSDFP", 
+                                      RPT_GRP_SEVNTEEN_C == 6 ~ "MSUS",
+                                      RPT_GRP_SEVNTEEN_C == 7 ~ "MSDMG", 
+                                      RPT_GRP_SEVNTEEN_C == 8 ~ "MSBI",
+                                      RPT_GRP_SEVNTEEN_C == 9 ~ "MSW", 
+                                      RPT_GRP_SEVNTEEN_C == 10 ~ "MSHP", 
+                                      RPT_GRP_SEVNTEEN_C == 11 ~ "MSM", 
+                                      RPT_GRP_SEVNTEEN_C == 12 ~ "MSH- AMBULATORY CARE",
+                                      RPT_GRP_SEVNTEEN_C == 13 ~ "NYEE", 
+                                      RPT_GRP_SEVNTEEN_C == 14 ~ "MS NOW", 
+                                      RPT_GRP_SEVNTEEN_C == 15 ~ "MSQ", 
+                                      RPT_GRP_SEVNTEEN_C == 19 ~ "MSSN", 
+                                      RPT_GRP_SEVNTEEN_C == 38 ~ "MSB")) %>%
+              dplyr::select(SITE, SPECIALTY, DEPARTMENT_ID) %>%
+              rename("DEPT_SPECIALTY_NAME" = SPECIALTY)) 
+
+
+
+slot_util_prov <- slot_merged %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  mutate(slot_date = sql("TRUNC(SLOT_BEGIN_TIME)")) %>%
+  mutate(slot_year = year(SLOT_BEGIN_TIME),
+         slot_month = month(SLOT_BEGIN_TIME)) %>%
+  filter(year(slot_date) >= prior_year) %>%
+  group_by(DEPT_SPECIALTY_NAME, DEPARTMENT_ID, DEPARTMENT_NAME, PROV_ID, NPI, PROV_NM_WID, PROV_TYPE, slot_year, slot_month) %>%
+  summarise(avail_hour = sum(REG_AVAIL_MIN, na.rm = T)/60,
+            sched_hour = sum(SCHED_MIN, na.rm = T)/60,
+            arrived_hour = sum(ARRIVED_MIN, na.rm = T)/60) %>%
+  mutate(prov_util = case_when(avail_hour == 0 | is.na(avail_hour) ~ 0, TRUE ~ arrived_hour/avail_hour)) %>%
+  # filter(prov_util >=0.15 & prov_util <=2.0) %>%
+  collect() %>%
+  rename("Year" = slot_year,
+         "Month" = slot_month)
+  
+```
+
+
+
+```{r Mount Sinai Holidays}
+
+
+holidays <- data.frame(
+  holiday = c("New Year's Day",
+              "MLK Day",
+              "President's Day",
+              "Memorial Day",
+              "Juneteenth",
+              "Independence Day",
+              "Labor Day",
+              "Thanksgiving Day",
+              "Christmas Day",
+              "New Year's Day",
+              "MLK Day",
+              "President's Day",
+              "Memorial Day",
+              "Juneteenth",
+              "Independence Day",
+              "Labor Day",
+              "Thanksgiving Day",
+              "Christmas Day"
+              ),
+  date = c("1/1/2025",
+                 "1/20/2025",
+                "2/17/2025",
+                "5/26/2025",
+                "6/19/2025",
+                "7/4/2025",
+                "9/1/2025",
+                "11/27/2025",
+                "12/25/2025",
+                "1/1/2026",
+                "1/19/2026",
+                "2/16/2026",
+                "5/26/2026",
+                "6/19/2026",
+                "7/3/2026",
+                "9/7/2026",
+                "11/26/2026",
+                "12/25/2026"
+                )
+  )
+
+holidays <- holidays %>%
+  mutate(week_start = floor_date(as.Date(date, "%m/%d/%Y"), unit = "week", week_start = 1))
+
+
+```
+
+
+```{r Templated Hours per Week, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+templated_hours <- availability_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>%
+              dplyr::select(PROV_ID, NPI, GENERIC_YN)) %>%
+  filter(GENERIC_YN == "N" | is.na(GENERIC_YN)) %>%
+  left_join(dep_mapping_tbl %>%
+              mutate(SITE = case_when(RPT_GRP_SEVNTEEN_C == 2 ~ "NETWORK",
+                                      RPT_GRP_SEVNTEEN_C == 3 ~ "OTHER",
+                                      RPT_GRP_SEVNTEEN_C == 4 ~ "MSH-MSDFP",
+                                      RPT_GRP_SEVNTEEN_C == 6 ~ "MSUS",
+                                      RPT_GRP_SEVNTEEN_C == 7 ~ "MSDMG",
+                                      RPT_GRP_SEVNTEEN_C == 8 ~ "MSBI",
+                                      RPT_GRP_SEVNTEEN_C == 9 ~ "MSW",
+                                      RPT_GRP_SEVNTEEN_C == 10 ~ "MSHP",
+                                      RPT_GRP_SEVNTEEN_C == 11 ~ "MSM",
+                                      RPT_GRP_SEVNTEEN_C == 12 ~ "MSH- AMBULATORY CARE",
+                                      RPT_GRP_SEVNTEEN_C == 13 ~ "NYEE",
+                                      RPT_GRP_SEVNTEEN_C == 14 ~ "MS NOW",
+                                      RPT_GRP_SEVNTEEN_C == 15 ~ "MSQ",
+                                      RPT_GRP_SEVNTEEN_C == 19 ~ "MSSN",
+                                      RPT_GRP_SEVNTEEN_C == 38 ~ "MSB")) %>%
+              dplyr::select(SITE, SPECIALTY, DEPARTMENT_ID) %>%
+              rename("DEPT_SPECIALTY_NAME" = SPECIALTY)) %>%
+  filter(APPT_NUMBER == 0) %>%
+  filter(is.na(UNAVAILABLE_RSN_NAME)) %>%
+  filter(year(SLOT_BEGIN_TIME) >= prior_year) %>%
+  filter(SLOT_BEGIN_TIME < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  mutate(slot_date = sql("TRUNC(SLOT_BEGIN_TIME)"),
+         # slot_year = year(SLOT_BEGIN_TIME),
+         # slot_month = month(SLOT_BEGIN_TIME),
+         # slot_day = sql("TO_CHAR(TRUNC(SLOT_BEGIN_TIME), 'FMDAY')"),
+         slot_week = sql("TRUNC(SLOT_BEGIN_TIME, 'IW')")) %>%
+  mutate(slot_year = year(slot_week),
+         slot_month = month(slot_week)) %>%
+  #   filter(PROV_ID == "135107") %>%
+  # filter(slot_year == 2025) %>%
+  # filter(slot_month == 3) %>%
+  group_by(DEPT_SPECIALTY_NAME, DEPARTMENT_ID, DEPARTMENT_NAME, PROV_ID, NPI, PROV_NM_WID, PROV_TYPE, slot_year, slot_month, slot_week) %>%
+  summarise(total = sum(SLOT_LENGTH, na.rm = T)) %>%
+  collect() %>%
+  rename("Year" = slot_year,
+         "Month" = slot_month)
+  
+templated_hours_prov <- templated_hours %>%
+  left_join(holidays %>% dplyr::select(holiday, week_start), 
+            by = c("slot_week" = "week_start")) %>%
+  filter(is.na(holiday)) %>%
+  group_by(Year, Month) %>%
+  mutate(working_weeks_system = n_distinct(slot_week)) %>%
+  group_by(PROV_ID, NPI, PROV_NM_WID, PROV_TYPE, Year, Month) %>%
+  mutate(working_weeks_prov = n_distinct(slot_week)) %>%
+  group_by(DEPT_SPECIALTY_NAME, DEPARTMENT_ID, DEPARTMENT_NAME, PROV_ID, NPI, PROV_NM_WID, PROV_TYPE, Year, Month, working_weeks_prov, working_weeks_system) %>%
+  summarise(templated_hours = sum(total, na.rm = T)/60,
+            working_weeks = n_distinct(slot_week)) %>%
+  relocate(working_weeks_prov, .after = "working_weeks") %>%
+  relocate(working_weeks_system, .after = "working_weeks_prov")
+
+
+```
+
+
+```{r Unfilled Slots, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+unfilled_slots_prov <- tbl(conn2, "V_AVAILABILITY") %>%
+  # filter(DEPARTMENT_ID == 8001059) %>%
+  # filter(PROV_ID == 377151) %>%
+  # filter(year(SLOT_BEGIN_TIME) ==  2026) %>%
+  # filter(month(SLOT_BEGIN_TIME) == 1) %>%
+  # left_join(clarity_ser_2_tbl %>% dplyr::select(PROV_ID, NPI)) %>%
+  filter(year(SLOT_BEGIN_TIME) >= prior_year) %>%
+  filter(SLOT_BEGIN_TIME < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  mutate(slot_date = sql("TRUNC(SLOT_BEGIN_TIME)"),
+         slot_year = year(SLOT_BEGIN_TIME),
+         slot_month = month(SLOT_BEGIN_TIME),
+         slot_day = sql("TO_CHAR(TRUNC(SLOT_BEGIN_TIME), 'FMDAY')"),
+         slot_week = sql("TRUNC(SLOT_BEGIN_TIME, 'IW')")) %>%
+  filter(TIME_HELD_YN == "N" | TIME_UNAVAIL_YN == "N") %>%
+  filter(SLOT_LENGTH >= 10) %>%
+  filter(as.numeric(SLOT_HOUR) >= 7 & as.numeric(SLOT_HOUR) <= 21) %>%
+
+  # Exclude any dates with 0 appts scheduled (false template)
+  group_by(DEPARTMENT_ID, PROV_ID, slot_date) %>%
+  mutate(apts_scheduled = sum(NUM_APTS_SCHEDULED, na.rm = T)) %>%
+  filter(apts_scheduled > 0) %>%
+  filter(APPT_NUMBER == 0) %>%
+  filter(ORG_REG_OPENINGS - NUM_APTS_SCHEDULED > 0) %>%
+
+  group_by(DEPARTMENT_ID, slot_year, slot_month, PROV_ID) %>%
+  summarise(unfilled_slots = n()) %>%
+  collect() %>%
+  rename("Year" = slot_year,
+         "Month" = slot_month)
+
+```
+
+
+```{r No Show, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+no_show_prov <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = APPT_DTTM - APPT_CANC_DTTM) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  filter(DERIVED_STATUS_DESC == "Arrived" | 
+           DERIVED_STATUS_DESC == "No Show" |
+           (DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <= 1) |
+           (DERIVED_STATUS_DESC == "Rescheduled" & CANCEL_INITIATOR == "PATIENT" & cancel_lead_days <= 1)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW")) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  filter(year(CONTACT_DATE) >= prior_year) %>%
+  filter(CONTACT_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  # dplyr::select(SITE, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, PROV_NAME_WID, PAT_ENC_CSN_ID, APPT_STATUS_NAME, CANCEL_LEAD_HOURS, CANCEL_INITIATOR) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_year, appt_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, DERIVED_STATUS_DESC) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = DERIVED_STATUS_DESC,
+              values_from = total,
+              values_fill = 0) %>%
+  mutate(perc_noShowPlusPlus = (`No Show` + Canceled + Rescheduled)/(Arrived + `No Show` + Canceled + Rescheduled),
+         perc_noShowPlus = (`No Show` + Canceled)/(Arrived + `No Show` + Canceled),
+         perc_noShow = (`No Show`)/(Arrived + `No Show`)) %>%
+  rename("No_Show" = `No Show`,
+         "Year" = appt_year,
+         "Month" = appt_month)
+
+  
+```
+
+
+```{r Appt Length Analysis, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+appt_length_prov <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = APPT_DTTM - APPT_CANC_DTTM) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW")) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(appt_30min = ifelse(APPT_LENGTH <=30 , "appt_30min", "appt_30min_more")) %>%
+  filter(DERIVED_STATUS_DESC == "Arrived") %>%
+  filter(year(CONTACT_DATE) >= prior_year) %>%
+  filter(CONTACT_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_year, appt_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, appt_30min) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = appt_30min,
+              values_from = total,
+              values_fill = 0) %>%
+  rename("Year" = appt_year,
+         "Month" = appt_month)
+
+
+```
+
+
+```{r EPCI Open Encounters, echo = FALSE, warning = FALSE, message = FALSE}
+
+open_enc_prov <-  access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(enc_status = ifelse(ENC_CLOSED_CHARGE_STATUS %in% c("OPEN", "CLOSED BUT COSIGN NEEDED"), 'OPEN', 'CLOSED')) %>%
+  mutate(open_days = ifelse(enc_status == "OPEN",
+                            TO_DATE(lubridate::today()) - TO_DATE(CONTACT_DATE),
+                            TO_DATE(Y_ENC_CLOSE_TIME) - TO_DATE(CONTACT_DATE))) %>%
+  mutate(enc_closed_7days = ifelse(open_days <=7 , "enc_closed_7days", "enc_closed_7days_more")) %>%
+  filter(DERIVED_STATUS_DESC == "Arrived") %>%
+  filter(year(CONTACT_DATE) >= prior_year) %>%
+  filter(CONTACT_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_year, appt_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, enc_closed_7days) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = enc_closed_7days,
+              values_from = total,
+              values_fill = 0) %>%
+  rename("Year" = appt_year,
+         "Month" = appt_month)
+
+
+```
+
+
+```{r New Patient Ratio (Providers In Scope), echo = FALSE, warning = FALSE, message = FALSE}
+
+
+new_pt_ratio_prov <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = CONTACT_DATE - APPT_CANC_DATE) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(appt_status = ifelse(DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <=0, "SameDay_Canceled", DERIVED_STATUS_DESC)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW"),
+         new_pt_los = ifelse(is.na(LOS_NAME), "ESTABLISHED_LOS", ifelse(LOS_NAME %LIKE% "%INITIAL%" | LOS_NAME %LIKE% "%NEW%", "NEW_LOS", "ESTABLISHED_LOS"))) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  
+  filter(year(CONTACT_DATE) >= prior_year) %>%
+  filter(CONTACT_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  filter(DERIVED_STATUS_DESC %in% c("Arrived")) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_year, appt_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, new_pt_los) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = new_pt_los,
+              values_from = total,
+              values_fill = 0) %>%
+  rowwise() %>%
+  mutate(appts_arrived = sum(NEW_LOS, ESTABLISHED_LOS, na.rm = T),
+         perc_new_los = NEW_LOS/appts_arrived) %>%
+  rename("Year" = appt_year,
+         "Month" = appt_month)
+```
+
+
+```{r New Patient Access (Providers In Scope), echo = FALSE, warning = FALSE, message = FALSE}
+
+new_pt_waitTime_prov <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = CONTACT_DATE - APPT_CANC_DATE) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(appt_status = ifelse(DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <=0, "SameDay_Canceled", DERIVED_STATUS_DESC)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW")) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  
+  filter(year(APPT_MADE_DATE) >= prior_year) %>%
+  filter(APPT_MADE_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  filter(visit_type == "NEW") %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, appt_made_year, appt_made_month, visit_type, lead_14days) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = c("visit_type", "lead_14days"),
+              values_from = total,
+              values_fill = 0) %>%
+  rowwise() %>%
+  mutate(NEW_appts_scheduled = sum(NEW_lead_14days, NEW_lead_14days_more, na.rm = T),
+         perc_new_lead_14days = NEW_lead_14days/NEW_appts_scheduled) %>%
+  rename("Year" = appt_made_year,
+          "Month" = appt_made_month)
+
+
+
+new_pt_waitTime_prov_payer <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  left_join(finclass_tbl %>% 
+              filter(PRD_TYPE == "EXCHANGE") %>%
+              dplyr::select(PLAN_NAME, PRD_TYPE) %>%
+              distinct(), 
+            by = c("VISITPLAN" = "PLAN_NAME")) %>%
+  mutate(FINCLASS = case_when(PRD_TYPE == "EXCHANGE" ~ "EXCHANGE", TRUE ~ FINCLASS)) %>%
+  
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = CONTACT_DATE - APPT_CANC_DATE) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(appt_status = ifelse(DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <=0, "SameDay_Canceled", DERIVED_STATUS_DESC)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW")) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  
+  filter(year(APPT_MADE_DATE) >= prior_year) %>%
+  filter(APPT_MADE_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  # filter(visit_type == "NEW") %>%
+  mutate(FINCLASS = case_when(FINCLASS %in% c("EXCHANGE") ~ "EXCHANGE",
+                              FINCLASS %in% c("Commercial/Managed Care") ~ "COMMERCIAL_MANAGED_CARE",
+                              FINCLASS %in% c("Medicaid Managed Care") ~ "MCD_HMO",
+                              FINCLASS %in% c("Medicare Managed Care") ~ "MCR_HMO",
+                              FINCLASS %in% c("Medicaid MS") ~ "MCD",
+                              FINCLASS %in% c("Medicare MS") ~ "MCR",
+                              FINCLASS %in% c("Self-pay", "Self Pay MS") ~ "SELF_PAY",
+                              TRUE ~ "OTHER"
+                              )) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, appt_made_year, appt_made_month, visit_type, FINCLASS, lead_14days) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = c("visit_type", "FINCLASS", "lead_14days"),
+              values_from = total,
+              values_fill = 0) %>%
+  rowwise() %>%
+  rename("Year" = appt_made_year,
+          "Month" = appt_made_month)
+
+```
+
+
+
+```{r Payer Mix, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+payer_mix_prov <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  left_join(finclass_tbl %>% 
+              filter(PRD_TYPE == "EXCHANGE") %>%
+              dplyr::select(PLAN_NAME, PRD_TYPE) %>%
+              distinct(), 
+            by = c("VISITPLAN" = "PLAN_NAME")) %>%
+  mutate(FINCLASS = case_when(PRD_TYPE == "EXCHANGE" ~ "EXCHANGE", TRUE ~ FINCLASS)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP", 
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = CONTACT_DATE - APPT_CANC_DATE) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(appt_status = ifelse(DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <=0, "SameDay_Canceled", DERIVED_STATUS_DESC)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW"),
+         new_pt_los = ifelse(is.na(LOS_NAME), "ESTABLISHED_LOS", ifelse(LOS_NAME %LIKE% "%INITIAL%" | LOS_NAME %LIKE% "%NEW%", "NEW_LOS", "ESTABLISHED_LOS"))) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+  
+  filter(year(CONTACT_DATE) >= prior_year) %>%
+  filter(CONTACT_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  filter(appt_status %in% c("Arrived")) %>%
+  mutate(FINCLASS = case_when(FINCLASS %in% c("EXCHANGE") ~ "EXCHANGE",
+                              FINCLASS %in% c("Commercial/Managed Care") ~ "COMMERCIAL_MANAGED_CARE",
+                              FINCLASS %in% c("Medicaid Managed Care") ~ "MCD_HMO",
+                              FINCLASS %in% c("Medicare Managed Care") ~ "MCR_HMO",
+                              FINCLASS %in% c("Medicaid MS") ~ "MCD",
+                              FINCLASS %in% c("Medicare MS") ~ "MCR",
+                              FINCLASS %in% c("Self-pay", "Self Pay MS") ~ "SELF_PAY",
+                              TRUE ~ "OTHER"
+                              )) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_year, appt_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, new_pt_los, FINCLASS) %>%
+  summarise(total = n()) %>%
+  collect() %>%
+  pivot_wider(names_from = c("new_pt_los","FINCLASS"),
+              values_from = total,
+              values_fill = 0) %>%
+  rename("Year" = appt_year,
+         "Month" = appt_month)
+
+
+# require(openxlsx)
+# write.xlsx(payer_mix, "Payer Mix_081925.xlsx")
+```
+
+
+```{r Referral Exclusion,  echo = FALSE, warning = FALSE, message = FALSE}
+
+#Referral Orders to Exclude from Conversion Reporting
+#Last Updated: 03.11.2025
+# Referral Orders Excluded
+
+ref_exclude <- c(
+  "AMB REF TO ACUPUNCTURE",
+  "AMB REF TO ADOL HEALTH COLPOSCOPY",
+  "AMB REF TO ADOL HEALTH ENDOCRINE",
+  "AMB REF TO ADOL HEALTH FITNESS SOCIAL WORK",
+  "AMB REF TO ADOL HEALTH HEALTH EDUCATION",
+  "AMB REF TO ADOL HEALTH HIV PRE TEST",
+  "AMB REF TO ADOL HEALTH NUTRITION",
+  "AMB REF TO ADOL HEALTH PRIMARY CARE SW",
+  "AMB REF TO ADOL HEALTH PROJECT IMPACT",
+  "AMB REF TO ADOL HEALTH PSYCHIATRY",
+  "AMB REF TO AHC GENERAL DENTAL",
+  "AMB REF TO AHC HEALTH NUTRITION",
+  "AMB REF TO AHC LARC",
+  "AMB REF TO AHC LEGAL HEALTH CLINIC",
+  "AMB REF TO AHC MENTAL HEALTH",
+  "AMB REF TO AHC OPTOMETRY",
+  "AMB REF TO AHC ORAL SURGERY",
+  "AMB REF TO AHC PEDS GI",
+  "AMB REF TO AHC PSYCHOLOGY",
+  "AMB REF TO AHC PSYCHOLOGY TESTING",
+  "AMB REF TO ALCOHOL ADDICTION LIVER CLINIC",
+  "AMB REF TO ALCOHOL/DRUG USE CLINIC",
+  "AMB REF TO ALLERGY & CLIN IMM (FPA ASTHMA)",
+  "AMB REF TO AMBULATORY BP MONITORING",
+  "AMB REF TO ANESTHESIOLOGY",
+  "AMB REF TO APHERESIS",
+  "AMB REF TO APHERESIS - CELL COLLECTION ALLOGENEIC",
+  "AMB REF TO APHERESIS - CELL COLLECTION AUTOLOGOUS",
+  "AMB REF TO BACK AND NECK CENTER OF EXCELLENCE",
+  "AMB REF TO BH SCREENING COLONOSCOPY",
+  "AMB REF TO CAPSULE ENDOSCOPY",
+  "AMB REF TO CARDIAC CATH (NS)",
+  "AMB REF TO CARDIAC REHAB",
+  "AMB REF TO CARDIOTHORACIC SURGERY",
+  "AMB REF TO CARE MANAGEMENT",
+  "AMB REF TO CHIROPRACTOR",
+  "AMB REF TO CHRONIC CARE MANAGEMENT",
+  "AMB REF TO CKD TEACHING/EDUCATION",
+  "AMB REF TO CO INFECTION CLINIC",
+  "AMB REF TO COGNITIVE NEUROLOGY",
+  "AMB REF TO COLONOSCOPY (SCREENING)",
+  "AMB REF TO COLONOSCOPY,DIAGNOSTIC",
+  "AMB REF TO COLPOSCOPY",
+  "AMB REF TO COMMUNITY PARAMEDICINE",
+  "AMB REF TO CONDITION MANAGEMENT PROGRAM - REMOTE PATIENT MONITORING",
+  "AMB REF TO CONSULT WORKERS COMPENSATION/SELIKOFF CENTER FOR OCCUPATIONAL HEALTH",
+  "AMB REF TO COUMADIN CLINIC",
+  "AMB REF TO COVID-19 FOLLOW UP",
+  "AMB REF TO COVID-19 TESTING (SYMPTOMATIC ONLY)",
+  "AMB REF TO COVID-19 THERAPEUTIC INFUSION",
+  "AMB REF TO CYSTIC FIBROSIS",
+  "AMB REF TO DENTISTRY",
+  "AMB REF TO DENTISTRY (OB)",
+  "AMB REF TO DIABETES ALLIANCE",
+  "AMB REF TO DIABETES CARE PROGRAM",
+  "AMB REF TO DIABETIC EDUCATOR",
+  "AMB REF TO DUBIN PSYCHOLOGY",
+  "AMB REF TO ENV & OCC MED (FPA ASTHMA PROG)",
+  "AMB REF TO ESTHETICIAN",
+  "AMB REF TO EXTERNAL BEHAVIORAL HEALTH (RAP NETWORK)",
+  "AMB REF TO EXTERNAL DENTAL",
+  "AMB REF TO EXTERNAL EARLY INTERVENTION",
+  "AMB REF TO EXTERNAL OCCUPATIONAL THERAPY",
+  "AMB REF TO EXTERNAL PHYSICAL THERAPY",
+  "AMB REF TO EXTERNAL SPEECH THERAPY",
+  "AMB REF TO FAMILY PLANNING",
+  "AMB REF TO FETAL ECHO",
+  "AMB REF TO FEU",
+  "AMB REF TO FPA SELIKOFF OCCUPATIONAL HEALTH",
+  "AMB REF TO FPA SOCIAL WORK",
+  "AMB REF TO GASTROENTEROLOGY (FPA ASTHMA)",
+  "AMB REF TO GERIATRIC PSYCHIATRY",
+  "AMB REF TO GYNECOLOGY",
+  "AMB REF TO HAND THERAPY",
+  "AMB REF TO HOME PALLIATIVE CARE",
+  "AMB REF TO HOME RADIOLOGY",
+  "AMB REF TO HOSPICE CARE",
+  "AMB REF TO IBD MALNUTRITION",
+  "AMB REF TO IMA BEHAVIORAL HEALTH (DEPRESSION CARE + IMA PSYCH + IMA EVAL)",
+  "AMB REF TO IMA DIABETES EDUCATOR",
+  "AMB REF TO IMA LONG COVID CLINIC",
+  "AMB REF TO IMA NEPHROLOGY",
+  "AMB REF TO IMA NUTRITION",
+  "AMB REF TO IMA PHARMACIST",
+  "AMB REF TO INFERTILITY PRACTICE",
+  "AMB REF TO INSTITUTE FOR LIVER MEDICINE NUTRITION",
+  "AMB REF TO INTERVENTIONAL RADIOLOGY",
+  "AMB REF TO INTESTINAL TRANSPLANT",
+  "AMB REF TO JMF",
+  "AMB REF TO JMF GYN",
+  "AMB REF TO JMF NEUROLOGY",
+  "AMB REF TO JMF PAIN MANAGEMENT",
+  "AMB REF TO JMF PSYCHIATRY",
+  "AMB REF TO JMF RENAL",
+  "AMB REF TO JMFC",
+  "AMB REF TO KIDNEY & PANCREAS TRANSPLANT",
+  "AMB REF TO LEAP",
+  "AMB REF TO LIGHTHOUSE OPHTHALMOLOGY",
+  "AMB REF TO MASSAGE THERAPY",
+  "AMB REF TO MENTAL HEALTH INITIAL",
+  "AMB REF TO MFM",
+  "AMB REF TO MFMA CONSULTATIVE SERVICES",
+  "AMB REF TO MFMA EVALUATION UNIT",
+  "AMB REF TO MOUNT SINAI FIT SMOKING CESSATION",
+  "AMB REF TO MSD FOREST HILLS CARDIOMETABOLIC WELLNESS PROGRAM",
+  "AMB REF TO MSH NETWORK CHF DISEASE MANAGEMENT PROGRAM",
+  "AMB REF TO MSQ EXPRESS CARE",
+  "AMB REF TO MSS TOTAL JOINT REPLACEMENT COE",
+  "AMB REF TO MSSN DIABETES EDUCATION",
+  "AMB REF TO MSSN PRE-OP CLEARANCE",
+  "AMB REF TO NEURO BEHAVIORAL CLINIC",
+  "AMB REF TO NEUROPHYS/PSYCH",
+  "AMB REF TO NOOM",
+  "AMB REF TO NURSING ADHERENCE VISIT",
+  "AMB REF TO NUTRITION",
+  "AMB REF TO NUTRITION CVI CLINIC",
+  "AMB REF TO NYS SMOKING CESSATION",
+  "AMB REF TO OB BOOKING",
+  "AMB REF TO OCCUPATIONAL THERAPY",
+  "AMB REF TO ONCOLOGY CLINICAL TRIALS",
+  "AMB REF TO ONCOLOGY NUTRITION",
+  "AMB REF TO ORTHOTICS",
+  "AMB REF TO OTOLARYNGOLOGY",
+  "AMB REF TO PACEMAKER CLINIC",
+  "AMB REF TO PATHOLOGY",
+  "AMB REF TO PEDIATRIC SOCIAL WORK/MENTAL HEALTH",
+  "AMB REF TO PEDIATRICS ENVIRONMENTAL",
+  "AMB REF TO PEDS ASTHMA FOLLOW UP",
+  "AMB REF TO PEDS CHILD DEVELOP",
+  "AMB REF TO PEDS CHILD/FAM SUP",
+  "AMB REF TO PEDS DENTAL",
+  "AMB REF TO PEDS EARLY INTER.",
+  "AMB REF TO PEDS GENETICS",
+  "AMB REF TO PEDS HEMATOLOGY",
+  "AMB REF TO PEDS OCCUP THERAPY",
+  "AMB REF TO PEDS PHYS THERAPY",
+  "AMB REF TO PEDS PSYCHIATRY",
+  "AMB REF TO PEDS PSYCHOLOGY",
+  "AMB REF TO PEDS SPEECH THERAPY",
+  "AMB REF TO PHARMACOGENETICS",
+  "AMB REF TO PHARMACY",
+  "AMB REF TO PHYSICAL THERAPY",
+  "AMB REF TO PREP",
+  "AMB REF TO PRE-PROCEDURE COVID-19 TESTING (ASYMPTOMATIC ONLY)",
+  "AMB REF TO PRIMARY CARE_SPECIALTY USE ONLY",
+  "AMB REF TO PROSTHETICS",
+  "AMB REF TO PSYCHIATRY",
+  "AMB REF TO PSYCHIATRY (FPA ASTHMA PROGRAM)",
+  "AMB REF TO PSYCHIATRY (PAS ONLY)",
+  "AMB REF TO PSYCHOLOGY",
+  "AMB REF TO PULMONARY FUNCTION LAB",
+  "AMB REF TO PULMONARY HYPERTENSION",
+  "AMB REF TO RAD ONCOLOGY",
+  "AMB REF TO RAINBOW CLINIC",
+  "AMB REF TO REACH PROGRAM(FOR SUBSTANCE USE AND/OR HEPATITUS C TREATMENT",
+  "AMB REF TO REGISTERED DIETICIAN",
+  "AMB REF TO REHAB PHASE II",
+  "AMB REF TO REHAB/MODIFIED BARIUM STUDY",
+  "AMB REF TO RMA REPRODUCTIVE ENDOCRINOLOGY",
+  "AMB REF TO RN-LED HTN MANAGEMENT CLINIC",
+  "AMB REF TO SELIKOFF SMOKING CESSATION PROGRAM",
+  "AMB REF TO SICKLE CELL",
+  "AMB REF TO SOCIAL WORK",
+  "AMB REF TO SPECIALTY SOCIAL WORK",
+  "AMB REF TO SPEECH THERAPY",
+  "AMB REF TO SPIRITUAL CARE",
+  "AMB REF TO SPORTS CONCUSSION",
+  "AMB REF TO SPORTS FELLOWSHIP",
+  "AMB REF TO SUPPORTIVE CARDIOLOGY",
+  "AMB REF TO SW FOR HIV COUNS/TEST",
+  "AMB REF TO SW MH SERVICES",
+  "AMB REF TO THORACIC DISEASES",
+  "AMB REF TO TOP (EXTERNAL)",
+  "AMB REF TO TRANSPLANT HBIG INFUSION",
+  "AMB REF TO UPPER ENDOSCOPY",
+  "AMB REF TO UROLOGY-INCONTINENCE",
+  "AMB REF TO VIRTUAL MED MANAGEMENT",
+  "AMB REF TO VISITING DOCTORS",
+  "AMB REF TO VISITING NURSE SERVICE",
+  "AMB REF TO VOCATIONAL THERAPY",
+  "AMB REF TO WHEELCHAIR CLINIC",
+  "AMB REF TO WOMEN, INFANT & CHILDREN'S FOOD SUPPLEMENT PROGRAM",
+  "AMB REF TO WOMEN'S HEALTH FPA",
+  "AMB REFERRAL TO PRECISION RECOVERY",
+  "AMB REFERRAL TO VASCULAR ACCESS SERVICE",
+  "AMBULATORY REFERRAL TO ED",
+  "APPOINTMENT AFTER ECONSULT",
+  "APRETUDE AUTHORIZATION REFERRAL",
+  "CABENUVA AUTHORIZATION REFERRAL",
+  "CARE MANAGEMENT REFERRAL FOR EXTERNAL SERVICES",
+  "IP SOCIAL WORK CONSULT TO CORAM CVS/SPECIALTY INFUSION SERVICES",
+  "MS AMB REF TO MIDI (EXTERNAL)",
+  "MSSN SURGICAL BOOKING ORDER",
+  "PHX REFERRAL TO LUNG TRANSPLANT",
+  "REFERRAL NUCLEAR STRESS TEST",
+  "AMB REF TO GMA SOCIAL WORK",
+  "AMB REF TO PAIN MANAGEMENT",
+  "AMB REF TO SW MENTAL HEALTH"
+
+)
+
+```
+
+
+```{r Referrals- Caboodle ReferralsDataView, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+# referral_dashboard <- read_csv(file.choose())
+# referral_dashboard2 <- referral_dashboard %>%
+#   dplyr::select(`Year of ENTRY_DATE`, `Month of ENTRY_DATE`, REFERRAL_ID, SCHED_APPT_FLAG, COMP_APPT_FLAG) 
+# 
+# referral_dashboard_summary <- referral_dashboard2 %>%
+#   group_by(`Year of ENTRY_DATE`, `Month of ENTRY_DATE`) %>% 
+#   summarise(total_scheduled = n_distinct(REFERRAL_ID[SCHED_APPT_FLAG == "YES"]))
+# 
+# audit <- full_join(rfl_visits_merged3, referral_dashboard2,
+#                by = c("ReferralEpicId" = "REFERRAL_ID")) %>%
+#   filter(start_year == 2024 | `Year of ENTRY_DATE` == 2024) %>%
+#   filter(start_month == 1 | `Month of ENTRY_DATE` == "January")
+# 
+# 
+# check <- audit %>% group_by(`Year of ENTRY_DATE`, `Month of ENTRY_DATE`, sched_flag, SCHED_APPT_FLAG) %>% summarise(total_scheduled = n_distinct(ReferralEpicId[SCHED_APPT_FLAG == "YES"]))
+# check2 <- audit %>% group_by(start_year, start_month, `Year of ENTRY_DATE`, `Month of ENTRY_DATE`) %>% summarise(total_scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]))
+# check3 <- rfl_visits_merged %>% group_by(start_year, start_month) %>% summarise(total_scheduled = n_distinct(ReferralEpicId[SCHED_APPT_FLAG == "YES"]))
+# 
+
+
+
+# check <- visitFact_conn %>%
+#   filter(EncounterEpicCsn == "100189690940") %>%
+#   collect()
+# 
+# referral_fact <- caboodle_referralFact_conn %>%
+#   head(10) %>%
+#   collect()
+# 
+# 
+
+
+# Updated Referral Conversion Logic --------------------------------------------
+
+## Referrals linked in Visit Fact
+visits_linked <- visitFact_conn %>%
+  filter(ReferralKey>0) %>%
+  group_by(ReferralKey, EncounterEpicCsn, AppointmentStatus, `_LastUpdatedInstant`) %>% 
+  summarise(total = n()) %>%
+  dplyr::select(ReferralKey, EncounterEpicCsn, AppointmentStatus) %>%
+  group_by(ReferralKey) %>%
+  summarise(sched_flag_visit = case_when(n_distinct(EncounterEpicCsn[AppointmentStatus %in% c("Completed", "Default", "Scheduled", "Finalized", "No Show",
+                                                                                              # "*Not Applicable", "*Deleted",  "*Unknown", "*Unspecified", "Deleted",  "Pending", "Standby", "Hold",
+                                                                                              "Left without seen", "Canceled",
+                                                                                              "Arrived", "Unschedulable", "Checked In",
+                                                                                              "Confirmed", "Checked Out", "Rescheduled")]) >0 ~ 1, TRUE ~ 0),
+            comp_flag_visit = case_when(n_distinct(EncounterEpicCsn[AppointmentStatus %in% c("Completed", "Arrived", "Checked In", "Checked Out")]) > 0 ~ 1, TRUE ~ 0))
+  # collect()
+
+# 
+# referral_fact <- caboodle_referralFact_conn %>%
+#   head(10) %>%
+#   # group_by(Status, PendingReason) %>%
+#   # summarise(total = n_distinct(ReferralKey)) %>%
+#   collect()
+
+# check <- caboodle_referrals_conn %>%
+#   left_join(caboodle_referralFact_conn %>% dplyr::select(ReferralKey, ExpirationInstant, InAnyWorkqueue, TriageRejectionReason, SchedulingStatus, PendingReason)) %>%
+#   group_by(Status, PendingReason) %>%
+#   summarise(total = n_distinct(ReferralKey)) %>%
+#   collect()
+
+
+
+## Referrals linked in ReferralDataView
+referrals <- caboodle_referrals_conn %>%
+  # left_join(caboodle_referralFact_conn %>% dplyr::select(ReferralKey, ExpirationInstant, InAnyWorkqueue, TriageRejectionReason, SchedulingStatus)) %>%
+  left_join(caboodle_referralFact_conn %>% dplyr::select(ReferralKey, PendingReason)) %>%
+  filter(!(ProcedureName %in% ref_exclude)) %>%
+  filter(ReceivedByDept != "*Unspecified") %>%
+  filter(Status != "Denied") %>%
+  filter(Class != "Outgoing") %>%
+  filter(PendingReason != "Exclude from Physician to Physician Referral Reporting") %>%
+  filter(year(Creation_Date) >= baseline_year) %>%
+  mutate(start_year = year(Creation_Date),
+         start_month = month(Creation_Date)) %>%
+  group_by(start_year, start_month, Creation_Date, ReceivedByDept, ReceivedByDepID, ReceivedByProvider, ReceivedByProvNPI, ICD_10_Chosen, TicketsSentToPatBy_X, ReferralKey, ReferralEpicId
+           # ProcedureName, ICD_10_Chosen,
+           # Status, InAnyWorkqueue, ExpirationInstant, TriageRejectionReason, SchedulingStatus
+           ) %>%
+  summarise(sched_flag_rfl = case_when(n_distinct(EncounterEpicCsn[AppointmentStatus %in% c("Completed", "Default", "Scheduled", "Finalized", "No Show",
+                                                                                              # "*Not Applicable", "*Deleted",  "*Unknown", "*Unspecified", "Deleted",  "Pending", "Standby", "Hold",
+                                                                                              "Left without seen", "Canceled",
+                                                                                              "Arrived", "Unschedulable", "Checked In",
+                                                                                              "Confirmed", "Checked Out", "Rescheduled")]) >0 ~ 1, TRUE ~ 0),
+            comp_flag_rfl = case_when(n_distinct(EncounterEpicCsn[AppointmentStatus %in% c("Completed", "Arrived", "Checked In", "Checked Out")]) > 0 ~ 1, TRUE ~ 0)) 
+  # collect()
+
+
+
+referrals_merged <- referrals %>%
+  left_join(visits_linked) %>% 
+  mutate(sched_flag = case_when(sched_flag_rfl == 1 | sched_flag_visit == 1 ~ "Y", TRUE ~ "N"),
+         comp_flag = case_when(comp_flag_rfl == 1 | comp_flag_visit == 1 ~ "Y", TRUE ~ "N")) 
+  # collect()
+
+
+# referrals_WQ <- referrals_merged %>%
+#   filter(InAnyWorkqueue == 1)
+# require(openxlsx)
+# write.xlsx(referrals_WQ, "Refer-To WQ Volume_100625.xlsx")
+
+
+referrals_mshs_baseline <- referrals_merged %>%
+  filter(start_year >= baseline_year) %>%
+  group_by(start_year, start_month, TicketsSentToPatBy_X) %>%
+  summarise(non_converted = n_distinct(ReferralEpicId[sched_flag == "N"]),
+            scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+            completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+  mutate(TicketsSentToPatBy_X = case_when(TicketsSentToPatBy_X=="" ~ "None", TRUE ~ TicketsSentToPatBy_X)) %>%
+  collect() %>%
+  pivot_wider(names_from = TicketsSentToPatBy_X,
+              values_from = c("non_converted", "scheduled", "completed"),
+              values_fill = 0) %>%
+  rowwise() %>% 
+  mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+         total_scheduled = sum(c_across(contains("scheduled"))),
+         total_completed = sum(c_across(contains("completed"))),
+         total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+         total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+         total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+         total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+  mutate(perc_conversion = total_scheduled/total_referrals,
+         perc_completion = total_completed/total_referrals,
+         perc_tkt_sent = total_tkt_sent/total_referrals,
+         perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+         perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+         perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+  rename("Year" = start_year,
+         "Month" = start_month)
+
+
+referrals_mshs_ytd <- referrals_merged %>%
+  filter(start_year >= prior_year) %>%
+  group_by(start_year, start_month, TicketsSentToPatBy_X) %>%
+  summarise(non_converted = n_distinct(ReferralEpicId[sched_flag == "N"]),
+            scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+            completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+  mutate(TicketsSentToPatBy_X = case_when(TicketsSentToPatBy_X=="" ~ "None", TRUE ~ TicketsSentToPatBy_X)) %>%
+  collect() %>%
+  pivot_wider(names_from = TicketsSentToPatBy_X,
+              values_from = c("non_converted", "scheduled", "completed"),
+              values_fill = 0) %>%
+  rowwise() %>% 
+  mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+         total_scheduled = sum(c_across(contains("scheduled"))),
+         total_completed = sum(c_across(contains("completed"))),
+         total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+         total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+         total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+         total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+  mutate(perc_conversion = total_scheduled/total_referrals,
+         perc_completion = total_completed/total_referrals,
+         perc_tkt_sent = total_tkt_sent/total_referrals,
+         perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+         perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+         perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+  rename("Year" = start_year,
+         "Month" = start_month)
+
+
+referrals_dep <- referrals_merged %>%
+  filter(year(Creation_Date) >= prior_year) %>%
+  filter(as.Date(Creation_Date) < as.Date(date_start)) %>%
+  group_by(ReceivedByDept, ReceivedByDepID, start_year, start_month, TicketsSentToPatBy_X) %>%
+  summarise(non_converted = n_distinct(ReferralEpicId[sched_flag == "N"]),
+            scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+            completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+  mutate(TicketsSentToPatBy_X = case_when(TicketsSentToPatBy_X=="" ~ "None", TRUE ~ TicketsSentToPatBy_X)) %>%
+  collect() %>%
+  pivot_wider(names_from = TicketsSentToPatBy_X,
+              values_from = c("non_converted", "scheduled", "completed"),
+              values_fill = 0) %>%
+  rowwise() %>% 
+  mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+         total_scheduled = sum(c_across(contains("scheduled"))),
+         total_completed = sum(c_across(contains("completed"))),
+         total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+         total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+         total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+         total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+  mutate(perc_conversion = total_scheduled/total_referrals,
+         perc_completion = total_completed/total_referrals,
+         perc_tkt_sent = total_tkt_sent/total_referrals,
+         perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+         perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+         perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+  rename("DEPARTMENT_NAME" =  ReceivedByDept,
+         "DEPARTMENT_ID" = ReceivedByDepID,
+         "Year" = start_year,
+         "Month" = start_month)
+
+
+
+referrals_prov <- referrals_merged %>%
+  filter(year(Creation_Date) >= prior_year) %>%
+  filter(as.Date(Creation_Date) < as.Date(date_start)) %>%
+  group_by(ReceivedByDept, ReceivedByDepID, ReceivedByProvider, ReceivedByProvNPI, start_year, start_month, TicketsSentToPatBy_X) %>%
+  summarise(non_converted = n_distinct(ReferralEpicId[sched_flag == "N"]),
+            scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+            completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+  mutate(TicketsSentToPatBy_X = case_when(TicketsSentToPatBy_X=="" ~ "None", TRUE ~ TicketsSentToPatBy_X)) %>%
+  collect() %>%
+  pivot_wider(names_from = TicketsSentToPatBy_X,
+              values_from = c("non_converted", "scheduled", "completed"),
+              values_fill = 0) %>%
+  rowwise() %>% 
+  mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+         total_scheduled = sum(c_across(contains("scheduled"))),
+         total_completed = sum(c_across(contains("completed"))),
+         total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+         total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+         total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+         total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+  mutate(perc_conversion = total_scheduled/total_referrals,
+         perc_completion = total_completed/total_referrals,
+         perc_tkt_sent = total_tkt_sent/total_referrals,
+         perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+         perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+         perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+  rename("DEPARTMENT_NAME" =  ReceivedByDept,
+         "DEPARTMENT_ID" = ReceivedByDepID,
+         "Year" = start_year,
+         "Month" = start_month)
+
+
+dept_mapping <- dep_mapping_tbl_loc %>%
+              mutate(SITE = case_when(RPT_GRP_SEVNTEEN_C == 2 ~ "NETWORK", 
+                                      RPT_GRP_SEVNTEEN_C == 3 ~ "OTHER", 
+                                      RPT_GRP_SEVNTEEN_C == 4 ~ "MSH-MSDFP", 
+                                      RPT_GRP_SEVNTEEN_C == 6 ~ "MSUS",
+                                      RPT_GRP_SEVNTEEN_C == 7 ~ "MSDMG", 
+                                      RPT_GRP_SEVNTEEN_C == 8 ~ "MSBI",
+                                      RPT_GRP_SEVNTEEN_C == 9 ~ "MSW", 
+                                      RPT_GRP_SEVNTEEN_C == 10 ~ "MSHP", 
+                                      RPT_GRP_SEVNTEEN_C == 11 ~ "MSM", 
+                                      RPT_GRP_SEVNTEEN_C == 12 ~ "MSH- AMBULATORY CARE",
+                                      RPT_GRP_SEVNTEEN_C == 13 ~ "NYEE", 
+                                      RPT_GRP_SEVNTEEN_C == 14 ~ "MS NOW", 
+                                      RPT_GRP_SEVNTEEN_C == 15 ~ "MSQ", 
+                                      RPT_GRP_SEVNTEEN_C == 19 ~ "MSSN", 
+                                      RPT_GRP_SEVNTEEN_C == 38 ~ "MSB")) %>%
+              dplyr::select(SITE, SPECIALTY, DEPARTMENT_ID) %>%
+              collect() %>%
+              rename("DEPT_SPECIALTY_NAME" = SPECIALTY) %>%
+  mutate(DEPARTMENT_ID = as.character(DEPARTMENT_ID))
+
+
+referrals_prov <- referrals_prov %>%
+  left_join(dept_mapping) %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI) %>%
+              collect(),
+            by = c("ReceivedByProvNPI" = "NPI")) %>% 
+  left_join(clarity_ser_tbl %>% 
+              select(PROV_ID, PROV_TYPE) %>% 
+              collect(),
+            by = c("PROV_ID")) %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI) %>%
+              collect())
+
+referrals_prov$ReceivedByProvider <- NULL
+referrals_prov$ReceivedByProvNPI <- NULL
+
+
+# # Origial Referral Conversion Code ---------------------------------------------
+# 
+# rfl_visits_linked <- visitFact_conn %>%
+#   filter(ReferralKey>0) %>%
+#   group_by(ReferralKey, EncounterEpicCsn, AppointmentStatus, `_LastUpdatedInstant`) %>% 
+#   summarise(total = n()) %>%
+#   collect()
+#   group_by(EncounterEpicCsn) %>%
+#   filter(`_LastUpdatedInstant` == max(`_LastUpdatedInstant`, na.rm = TRUE)) %>%
+#   dplyr::select(ReferralKey, EncounterEpicCsn, AppointmentStatus) %>%
+#   group_by(ReferralKey) %>%
+#   summarise(num_appts_sched = n_distinct(EncounterEpicCsn),
+#             num_appts_comp = n_distinct(EncounterEpicCsn[AppointmentStatus %in% c("Completed", "Arrived", "Checked In", "Finalized", "Checked Out")])) %>%
+#   mutate(sched_flag = case_when(num_appts_sched > 0 ~ "Y", TRUE ~ "N"),
+#          comp_flag = case_when(num_appts_comp >0 ~ "Y", TRUE ~ "N")) %>%
+#   collect()
+# 
+# 
+# referrals_merged <- caboodle_referrals_conn %>%
+#   filter(!(ProcedureName %in% ref_exclude)) %>%
+#   filter(ReceivedByDept != "*Unspecified") %>%
+#   filter(Status != "Denied") %>%
+#   filter(Class != "Outgoing") %>%
+#   dplyr::select(-c("AppointmentCreationDateKey", 
+#                    "AppointmentCreationDate",
+#                    "AppointmentDateKey",
+#                     "AppointmentTimeOfDayKey",
+#                     "Appt_Date",
+#                     "Appt_Time",
+#                     "AppointmentDateTime",
+#                     "EncounterEpicCsn",
+#                     "Scheduled_in_DeptName",
+#                     "Scheduled_in_DeptID",
+#                     "AppointmentStatus",
+#                     "AppointmentEntryEmployee",
+#                     "AppointmentEntryEmployeeName")) %>%
+#   distinct() %>%
+#   left_join(rfl_visits_linked, 
+#             by = c("ReferralKey")) %>%
+#   collect()
+# 
+# 
+# referrals_mshs_baseline <- referrals_merged %>%
+#   filter(year(Creation_Date) == prior_year) %>%
+#   mutate(start_year = year(Creation_Date),
+#          start_month = month(Creation_Date)) %>%
+#   group_by(start_year, start_month, TicketsSentToPatBy_X) %>%
+#   summarise(non_converted = n_distinct(ReferralEpicId[is.na(sched_flag)]),
+#             scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+#             completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+#   collect() %>%
+#   mutate(TicketsSentToPatBy_X = ifelse(TicketsSentToPatBy_X=="", "None", TicketsSentToPatBy_X)) %>%
+#   pivot_wider(names_from = TicketsSentToPatBy_X,
+#               values_from = c("non_converted", "scheduled", "completed"),
+#               values_fill = 0) %>%
+#   rowwise() %>% 
+#   mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+#          total_scheduled = sum(c_across(contains("scheduled"))),
+#          total_completed = sum(c_across(contains("completed"))),
+#          total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+#          total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+#          total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+#          total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+#   mutate(perc_conversion = total_scheduled/total_referrals,
+#          perc_completion = total_completed/total_referrals,
+#          perc_tkt_sent = total_tkt_sent/total_referrals,
+#          perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+#          perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+#          perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+#   rename("Year" = start_year,
+#          "Month" = start_month)
+# 
+# 
+# referrals_mshs_ytd <- referrals_merged %>%
+#   filter(year(Creation_Date) == current_year) %>%
+#   mutate(start_year = year(Creation_Date),
+#          start_month = month(Creation_Date)) %>%
+#   group_by(start_year, start_month, TicketsSentToPatBy_X) %>%
+#   summarise(non_converted = n_distinct(ReferralEpicId[is.na(sched_flag)]),
+#             scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+#             completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+#   collect() %>%
+#   mutate(TicketsSentToPatBy_X = ifelse(TicketsSentToPatBy_X=="", "None", TicketsSentToPatBy_X)) %>%
+#   pivot_wider(names_from = TicketsSentToPatBy_X,
+#               values_from = c("non_converted", "scheduled", "completed"),
+#               values_fill = 0) %>%
+#   rowwise() %>% 
+#   mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+#          total_scheduled = sum(c_across(contains("scheduled"))),
+#          total_completed = sum(c_across(contains("completed"))),
+#          total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+#          total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+#          total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+#          total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+#   mutate(perc_conversion = total_scheduled/total_referrals,
+#          perc_completion = total_completed/total_referrals,
+#          perc_tkt_sent = total_tkt_sent/total_referrals,
+#          perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+#          perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+#          perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+#   rename("Year" = start_year,
+#          "Month" = start_month)
+# 
+# 
+# referrals_dep <- referrals_merged %>%
+#   filter(year(Creation_Date) >= prior_year) %>%
+#   filter(as.Date(Creation_Date) < as.Date(date_start)) %>%
+#   mutate(start_year = year(Creation_Date),
+#          start_month = month(Creation_Date)) %>%
+#   group_by(ReceivedByDept, ReceivedByDepID, start_year, start_month, TicketsSentToPatBy_X) %>%
+#   summarise(non_converted = n_distinct(ReferralEpicId[is.na(sched_flag)]),
+#             scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+#             completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+#   collect() %>%
+#   mutate(TicketsSentToPatBy_X = ifelse(TicketsSentToPatBy_X=="", "None", TicketsSentToPatBy_X)) %>%
+#   pivot_wider(names_from = TicketsSentToPatBy_X,
+#               values_from = c("non_converted", "scheduled", "completed"),
+#               values_fill = 0) %>%
+#   rowwise() %>% 
+#   mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+#          total_scheduled = sum(c_across(contains("scheduled"))),
+#          total_completed = sum(c_across(contains("completed"))),
+#          total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+#          total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+#          total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+#          total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+#   mutate(perc_conversion = total_scheduled/total_referrals,
+#          perc_completion = total_completed/total_referrals,
+#          perc_tkt_sent = total_tkt_sent/total_referrals,
+#          perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+#          perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+#          perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+#   rename("DEPARTMENT_NAME" =  ReceivedByDept,
+#          "DEPARTMENT_ID" = ReceivedByDepID,
+#          "Year" = start_year,
+#          "Month" = start_month)
+# 
+# 
+# referrals_prov <- referrals_merged %>%
+#   filter(year(Creation_Date) >= prior_year) %>%
+#   filter(as.Date(Creation_Date) < as.Date(date_start)) %>%
+#   mutate(start_year = year(Creation_Date),
+#          start_month = month(Creation_Date)) %>%
+#   group_by(ReceivedByDept, ReceivedByDepID, ReceivedByProvider, ReceivedByProvNPI, start_year, start_month, TicketsSentToPatBy_X) %>%
+#   summarise(non_converted = n_distinct(ReferralEpicId[is.na(sched_flag)]),
+#             scheduled = n_distinct(ReferralEpicId[sched_flag == "Y"]),
+#             completed = n_distinct(ReferralEpicId[comp_flag == "Y"])) %>%
+#   collect() %>%
+#   mutate(TicketsSentToPatBy_X = ifelse(TicketsSentToPatBy_X=="", "None", TicketsSentToPatBy_X)) %>%
+#   pivot_wider(names_from = TicketsSentToPatBy_X,
+#               values_from = c("non_converted", "scheduled", "completed"),
+#               values_fill = 0) %>%
+#   rowwise() %>% 
+#   mutate(total_referrals = sum(c_across(contains("non_converted") | contains("scheduled"))),
+#          total_scheduled = sum(c_across(contains("scheduled"))),
+#          total_completed = sum(c_across(contains("completed"))),
+#          total_tkt_sent_scheduler = sum(c_across(contains("converted_scheduler") | contains("scheduled_scheduler"))),
+#          total_tkt_sent_automated = sum(c_across(contains("converted_Automated") | contains("scheduled_Automated"))),
+#          total_tkt_sent_both = sum(c_across(contains("converted_both") | contains("scheduled_both"))),
+#          total_tkt_sent = sum(total_tkt_sent_scheduler, total_tkt_sent_automated, total_tkt_sent_both)) %>%
+#   mutate(perc_conversion = total_scheduled/total_referrals,
+#          perc_completion = total_completed/total_referrals,
+#          perc_tkt_sent = total_tkt_sent/total_referrals,
+#          perc_tkt_sent_automated = total_tkt_sent_automated/total_referrals,
+#          perc_tkt_sent_scheduler = total_tkt_sent_scheduler/total_referrals,
+#          perc_tkt_sent_both = total_tkt_sent_both/total_referrals) %>%
+#   rename("DEPARTMENT_NAME" =  ReceivedByDept,
+#          "DEPARTMENT_ID" = ReceivedByDepID,
+#          "Year" = start_year,
+#          "Month" = start_month)
+# 
+# 
+# referrals_prov <- referrals_prov %>%
+#   left_join(clarity_ser_2_tbl %>% 
+#               dplyr::select(PROV_ID, NPI) %>%
+#               collect(),
+#             by = c("ReceivedByProvNPI" = "NPI")) %>% 
+#   left_join(clarity_ser_tbl %>% 
+#               select(PROV_ID, PROV_TYPE) %>% 
+#               collect(),
+#             by = c("PROV_ID")) %>%
+#   left_join(clarity_ser_2_tbl %>% 
+#               dplyr::select(PROV_ID, NPI) %>%
+#               collect())
+# 
+# referrals_prov$ReceivedByProvider <- NULL
+# referrals_prov$ReceivedByProvNPI <- NULL
+
+# require(openxlsx)
+# write.xlsx(referrals_prov, "Referrals by Provider.xlsx")
+```
+
+
+```{r Online Appointments, echo = FALSE, warning = FALSE, message = FALSE}
+
+appt_online <- access_raw_tbl %>%
+  left_join(clarity_ser_tbl %>% select(PROV_ID, PROV_TYPE)) %>%
+  # filter(PROV_TYPE == "Physician") %>%
+  left_join(clarity_ser_2_tbl %>% 
+              dplyr::select(PROV_ID, NPI)) %>%
+  filter(!is.na(SITE)) %>%
+  filter(SITE %in% c("MSUS", "MSH- AMBULATORY CARE", "NETWORK", "MSW", "MSH-MSDFP",
+                     "MSDMG", "MSB", "MSM", "MSQ", "MSBI", "MSSN", "NYEE")) %>%
+  mutate(lead_days = CONTACT_DATE - APPT_MADE_DATE) %>%
+  mutate(cancel_lead_days = CONTACT_DATE - APPT_CANC_DATE) %>%
+  # mutate(lead_days =  as.numeric(difftime(as.Date(APPT_MADE_DATE), as.Date(CONTACT_DATE), units = "days"))) %>%
+  mutate(appt_status = ifelse(DERIVED_STATUS_DESC == "Canceled" & cancel_lead_days <=0, "SameDay_Canceled", DERIVED_STATUS_DESC)) %>%
+  mutate(appt_year = year(CONTACT_DATE),
+         appt_month = month(CONTACT_DATE)) %>%
+  mutate(appt_made_year = year(APPT_MADE_DATE),
+         appt_made_month = month(APPT_MADE_DATE)) %>%
+  mutate(visit_type = ifelse(is.na(VISIT_GROUP_NUM), "ESTABLISHED", "NEW")) %>%
+  mutate(lead_14days = ifelse(lead_days <= 14, "lead_14days", "lead_14days_more")) %>%
+  mutate(SPECIALTY_GRP = ifelse(DEPT_SPECIALTY_NAME %in% 
+                                  c("Adolescent Medicine", "Community and Preventive Medicine", 
+                                    "Family Medicine", "Internal Medicine", "Pediatrics", "Geriatrics", "Gerontology", "Urgent Care"), "Primary Care", "Specialty")) %>%
+
+  filter(year(APPT_MADE_DATE) >= baseline_year) %>%
+  filter(APPT_MADE_DATE < TO_DATE(date_start, "YYYY-MM-DD HH24:MI:SS")) %>%
+  left_join(f_sched_appt_tbl %>%
+              dplyr::select(PAT_ENC_CSN_ID, COULD_DIR_SCHED_C, COULD_OPEN_SCHED_C, COULD_TKT_SCHED_C, APPT_SCHED_SOURCE_C, PAT_ONLINE_YN)) %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, FINANCIAL_DIVISION, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, appt_made_year, appt_made_month,
+           COULD_DIR_SCHED_C, COULD_OPEN_SCHED_C, COULD_TKT_SCHED_C, APPT_SCHED_SOURCE_C, APPT_SCHED_SOURCE, DERIVED_STATUS_DESC, SCHED_METHOD, PAT_ONLINE_YN, WALK_IN_YN) %>%
+  summarise(total = n()) %>%
+  collect()
+
+
+
+appt_online <- appt_online %>%
+  filter(!is.na(COULD_DIR_SCHED_C) | !is.na(COULD_OPEN_SCHED_C) | !is.na(COULD_TKT_SCHED_C)) %>%
+  filter(!(COULD_DIR_SCHED_C %in% c(13) & COULD_OPEN_SCHED_C %in% c(13) & COULD_TKT_SCHED_C %in% c(13))) %>%
+  mutate(COULD_DIR_SCHED = ifelse(COULD_DIR_SCHED_C %in% c(11), 1, 0),
+         COULD_OPEN_SCHED = ifelse(COULD_OPEN_SCHED_C %in% c(11), 1, 0),
+         COULD_TKT_SCHED = ifelse(COULD_TKT_SCHED_C %in% c(11), 1, 0)) %>%
+  mutate(avail_online_exclude = ifelse(APPT_SCHED_SOURCE_C %in% c(27, 28, 33, 34), "Y", "N")) %>%
+  # mutate(avail_online = ifelse((COULD_DIR_SCHED + COULD_OPEN_SCHED + COULD_TKT_SCHED)>0, "Y", "N")) %>%
+  # mutate(sched_online = ifelse((avail_online == "Y" & WALK_IN_YN == "N" & PAT_ONLINE_YN == "Y"), "Y", "N")) %>%
+  mutate(avail_online = ifelse((COULD_DIR_SCHED + COULD_OPEN_SCHED + COULD_TKT_SCHED)>0, "avail_Y", "avail_N")) %>%
+  mutate(sched_online = ifelse((avail_online == "avail_Y" & WALK_IN_YN == "N" & PAT_ONLINE_YN == "Y"), "sched_Y", "sched_N"))
+
+
+
+appt_avail_online_mshs_baseline <- appt_online %>%
+  filter(appt_made_year >= baseline_year) %>%
+  filter(avail_online_exclude == "N") %>%
+  group_by(appt_made_year, appt_made_month, avail_online, sched_online) %>%
+  summarise(appts_sched = sum(total, na.rm = T))  %>%
+  pivot_wider(names_from = c("avail_online", "sched_online"),
+              values_from = appts_sched,
+              values_fill = 0) %>%
+  mutate(perc_avail_online = (avail_Y_sched_N + avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y),
+         perc_sched_online = (avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y)) %>%
+         # perc_sched_online = (avail_Y_sched_Y) / (avail_Y_sched_Y + avail_Y_sched_N)) %>%
+  rename("Year" = appt_made_year,
+         "Month" = appt_made_month)
+
+
+appt_avail_online_mshs_ytd <- appt_online %>%
+  filter(appt_made_year >= prior_year) %>%
+  filter(avail_online_exclude == "N") %>%
+  group_by(appt_made_year, appt_made_month, avail_online, sched_online) %>%
+  summarise(appts_sched = sum(total, na.rm = T))  %>%
+  pivot_wider(names_from = c("avail_online", "sched_online"),
+              values_from = appts_sched,
+              values_fill = 0) %>%
+  mutate(perc_avail_online = (avail_Y_sched_N + avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y),
+         perc_sched_online = (avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y)) %>%
+         # perc_sched_online = (avail_Y_sched_Y) / (avail_Y_sched_Y + avail_Y_sched_N)) %>%
+  rename("Year" = appt_made_year,
+         "Month" = appt_made_month)
+
+
+appt_avail_online_dep <- appt_online %>%
+  filter(appt_made_year >= prior_year) %>%
+  filter(avail_online_exclude == "N") %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_made_year, appt_made_month, avail_online, sched_online) %>%
+  summarise(appts_sched = sum(total, na.rm = T))  %>%
+  pivot_wider(names_from = c("avail_online", "sched_online"),
+              values_from = appts_sched,
+              values_fill = 0) %>%
+  mutate(perc_avail_online = (avail_Y_sched_N + avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y),
+         perc_sched_online = (avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y)) %>%
+         # perc_sched_online = (avail_Y_sched_Y) / (avail_Y_sched_Y + avail_Y_sched_N)) %>%
+  rename("Year" = appt_made_year,
+         "Month" = appt_made_month)
+
+
+appt_avail_online_prov <- appt_online %>%
+  filter(appt_made_year >= prior_year) %>%
+  filter(avail_online_exclude == "N") %>%
+  group_by(SITE, SPECIALTY_GRP, DEPT_SPECIALTY_NAME, DEPARTMENT_NAME, DEPARTMENT_ID, appt_made_year, appt_made_month, PROV_ID, NPI, PROV_NAME_WID, PROV_TYPE, avail_online, sched_online) %>%
+  summarise(appts_sched = sum(total, na.rm = T))  %>%
+  pivot_wider(names_from = c("avail_online", "sched_online"),
+              values_from = appts_sched,
+              values_fill = 0) %>%
+  mutate(perc_avail_online = (avail_Y_sched_N + avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y),
+         perc_sched_online = (avail_Y_sched_Y) / (avail_N_sched_N + avail_Y_sched_N + avail_Y_sched_Y)) %>%
+         # perc_sched_online = (avail_Y_sched_Y) / (avail_Y_sched_Y + avail_Y_sched_N)) %>%
+  rename("Year" = appt_made_year,
+         "Month" = appt_made_month)
+
+```
+
+
+
+```{r Provider Data Merged}
+
+prov_merged <- left_join(slot_util_prov, templated_hours_prov)
+prov_merged <- merge(prov_merged, no_show_prov, all = T)
+# prov_merged <- merge(prov_merged, no_show_prov_physician, all = T)
+prov_merged <- merge(prov_merged, appt_length_prov, all = T)
+prov_merged <- merge(prov_merged, open_enc_prov, all = T)
+prov_merged <- merge(prov_merged, new_pt_ratio_prov, all = T)
+prov_merged <- merge(prov_merged, new_pt_waitTime_prov, all = T)
+prov_merged <- merge(prov_merged, new_pt_waitTime_prov_payer, all = T)
+# prov_merged <- merge(prov_merged, payer_mix_prov, all = T)
+prov_merged <- merge(prov_merged, appt_avail_online_prov, all = T)
+prov_merged <- merge(prov_merged, referrals_prov, all = T)
+
+
+
+prov_merged <- prov_merged %>%
+  mutate(Year = as.character(Year),
+         Month = as.character(Month)) %>%
+  mutate(across(where(is.numeric), ~replace(., is.na(.), 0))) %>%
+  mutate(`Year-Month` = paste0(Year,"-",Month)) %>%
+  rename("Specialty" = DEPT_SPECIALTY_NAME,
+         "Specialty Type" = SPECIALTY_GRP) 
+
+
+# Referral Conversion and Completion of Tickets Sent
+# department_merged <- department_merged %>%
+#   mutate(perc_conversion_None = (scheduled_None/(non_converted_None + scheduled_None)),
+#          perc_conversion_Automated = (scheduled_Automated/(non_converted_Automated + scheduled_Automated)),
+#          perc_conversion_Scheduler = (scheduled_Scheduler/(non_converted_Scheduler + scheduled_Scheduler)),
+#          perc_conversion_Both = (scheduled_Both/(non_converted_Both + scheduled_Both)))
+
+# 
+require(openxlsx)
+write.xlsx(prov_merged, "prov_merged_072726.xlsx")
+
+```
+
+
+```{r}
+
+
+htmltools::browsable(
+  tagList(
+    tags$button(
+      tagList(fontawesome::fa("download"), "Download Table"),
+      onclick = "Reactable.downloadDataCSV('prov-merged', 'Prov Merged Data')"
+    ),
+
+# htmltools::browsable(
+#   tagList(
+#     div(tags$label("Summary by", `for` = "access-roi")),
+#     tags$select(
+#       id = "access-roi",
+#       onchange = "Reactable.setGroupBy('access-metrics', this.value ? [this.value] : [])",
+#       tags$option("None", value = ""),
+#       lapply(c("Year", "Month"), tags$option)
+#     ),
+# 
+#     tags$hr("aria-hidden" = "true"),
+    
+reactable(
+  prov_merged,
+  elementId = "prov-merged"
+
+  ) # Close Reactable
+) # Close Taglist
+) # Close htmltools
+
+
+
+```
+
